@@ -1,0 +1,55 @@
+-- ---
+-- marp: true
+-- 
+-- ---
+
+-- # Convert to Haskell Script (non literate) to Markdown (marp format)
+ 
+{-# LANGUAGE MultiWayIf #-}
+module Main where
+
+import Data.Bool (bool)
+import Data.Char (isSpace)
+import Data.List (isPrefixOf, dropWhileEnd)
+import Data.Maybe (maybe, fromJust)
+import System.IO (isEOF)
+
+main :: IO ()
+main = loop (Just False)
+
+loop :: Maybe Bool -> IO ()
+loop flg = bool (output flg =<< getLine) (done flg) =<< isEOF
+
+output :: Maybe Bool -> String -> IO ()
+output flg line = case splitAt commentPrefixLength trimed of
+  ("", _)     -> putStr (maybe "\n" (bool "\n\n" "\n") flg)
+                 >> loop (maybe Nothing (const (Just True)) flg)
+  ("--", _)   -> putStr (maybe "```\n\n" (bool "\n\n" "\n") flg)
+                 >> loop (Just True)
+  ("-- ", cs) -> putStr (comment flg hr cs)
+                 >> loop next
+                   where
+                     hr = cs == "---"
+                     next = Just hr
+  (_, _)      -> putStrLn (maybe id (\ nl -> bool newline id nl . ("```haskell\n" ++)) flg trimed)
+                 >> loop Nothing
+  where
+    trimed = dropWhileEnd isSpace line
+
+comment :: Maybe Bool -> Bool -> String -> String
+comment flg hr cs = maybe ("```\n\n" ++) (const id) flg (bool cs "---\n" hr)
+      
+newline :: ShowS
+newline = ('\n' :)
+
+nop :: IO ()
+nop = return ()
+
+commentPrefixLength :: Int
+commentPrefixLength = length commentPrefix
+
+commentPrefix :: String
+commentPrefix = "-- "
+
+done :: Maybe Bool -> IO ()
+done = maybe (putStrLn "```") (const nop)

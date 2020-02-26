@@ -1,41 +1,24 @@
--- ---
--- marp: true
--- 
--- ---
--- 
 -- # Convert to Markdown to Haskell Script (non literate)
 
 {-# LANGUAGE MultiWayIf #-}
 module Main where
 
-import Data.Bool (bool)
-import Data.Char (isSpace)
-import Data.List (isPrefixOf)
-import System.IO (isEOF)
+import System.FilePath
+import System.Environment
+import System.IO
+
+import TextFilter
+import Md2Hs
 
 main :: IO ()
-main = loop False
+main = do
+  { args <- getArgs
+  ; case args of
+      []         -> fileProc "-" "-" markdownToHaskell
+      inp:[]     -> case splitExtension inp of
+        (fp,".md") -> fileProc inp (fp++".hs") markdownToHaskell
+        _          -> fileProc inp "-" markdownToHaskell
+      inp:outp:_ -> fileProc inp outp markdownToHaskell
+  }
 
-loop :: Bool -> IO ()
-loop flg = bool (output flg =<< getLine) done =<< isEOF
 
-output :: Bool -> String -> IO ()
-output flg line = if
-  | flg -> if
-      | endCode   `isPrefixOf` line -> loop False
-      | otherwise                   -> putStrLn line >> loop flg
-  | otherwise -> if
-      | beginCode `isPrefixOf` line -> loop True
-      | otherwise                   -> putStrLn ("-- " ++ line) >> loop flg
-
-nop :: IO ()
-nop = return ()
-
-beginCode :: String
-beginCode = "```haskell"
-
-endCode :: String
-endCode = "```"
-
-done :: IO ()
-done = return ()

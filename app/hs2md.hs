@@ -1,41 +1,22 @@
--- ---
--- marp: true
--- 
--- ---
--- 
--- # Convert to Haskell Script (non literate) to Markdown (marp format)
-
+-- # Converter from Haskell Script to Markdown
+--
 {-# LANGUAGE MultiWayIf #-}
 module Main where
 
-import Data.Bool (bool)
-import Data.Char (isSpace)
-import Data.List (isPrefixOf)
-import System.IO (isEOF)
+import System.FilePath
+import System.Environment
+import System.IO
+
+import TextFilter
+import Hs2Md
 
 main :: IO ()
-main = loop True
-
-loop :: Bool -> IO ()
-loop flg = bool (output flg) (done flg) =<< isEOF
-
-output :: Bool -> IO ()
-output flg = do
-  { line <- getLine
-  ; if
-      | null (dropWhile isSpace line)   -> putStrLn line >> loop flg
-      | commentPrefix `isPrefixOf` line -> bool (putStrLn "```") nop flg >> putStrLn (drop commentPrefixLength line) >> loop True
-      | otherwise                       -> bool nop (putStrLn "```haskell") flg >> putStrLn line >> loop False
+main = do
+  { args <- getArgs
+  ; case args of
+      []         -> fileProc "-" "-" haskellToMarkdown
+      inp:[]     -> case splitExtension inp of
+        (fp,".hs") -> fileProc inp (fp++".md") haskellToMarkdown
+        _          -> fileProc inp "-" haskellToMarkdown
+      inp:outp:_ -> fileProc inp outp haskellToMarkdown
   }
-
-nop :: IO ()
-nop = return ()
-
-commentPrefixLength :: Int
-commentPrefixLength = length commentPrefix
-
-commentPrefix :: String
-commentPrefix = "-- "
-
-done :: Bool -> IO ()
-done = bool (putStrLn "```") (return ())
