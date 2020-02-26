@@ -1,5 +1,5 @@
--- # Convert to Markdown to Haskell Script (non literate)
-
+-- # Convert from Markdown to Haskell
+-- 
 {-# LANGUAGE MultiWayIf #-}
 module Main where
 
@@ -9,7 +9,11 @@ import System.IO
 
 import TextFilter
 import Md2Hs
-
+-- 
+-- ---
+-- 
+-- ## Command
+-- 
 main :: IO ()
 main = do
   { args <- getArgs
@@ -20,5 +24,3 @@ main = do
         _          -> fileProc inp "-" markdownToHaskell
       inp:outp:_ -> fileProc inp outp markdownToHaskell
   }
-
-

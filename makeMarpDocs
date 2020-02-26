@@ -1,0 +1,4 @@
+#!/bin/zsh
+
+find -type d | grep -v "^./.git" | grep -v "^./.stack-work" |  xargs mkdocdir
+find -type f -name '*.hs' | grep -v "^./.git" | grep -v "^./.stack-work" |  xargs mkmds

@@ -1,6 +1,7 @@
--- # Converter from Haskell Script to Markdown
---
+-- # Converter from Haskell to Markdown
+-- 
 {-# LANGUAGE MultiWayIf #-}
+
 module Main where
 
 import System.FilePath
@@ -9,7 +10,11 @@ import System.IO
 
 import TextFilter
 import Hs2Md
-
+-- 
+-- ---
+-- 
+-- ## Command
+-- 
 main :: IO ()
 main = do
   { args <- getArgs
