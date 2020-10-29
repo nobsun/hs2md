@@ -5,14 +5,23 @@ import Data.Bool (bool)
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
-import System.IO
+import System.IO ( Handle, hIsEOF, hPutStrLn )
 
 import qualified Marp
+import qualified Zenn
+
+data MD 
+  = Marp
+  | Zenn
+  | Other FilePath
 
 type InComment = Bool
 
-haskellToMarkdown :: Handle -> Handle -> IO ()
-haskellToMarkdown ih oh = T.hPutStr oh (T.unlines Marp.headers) >> loop ih oh True
+haskellToMarkdown :: MD -> Handle -> Handle -> IO ()
+haskellToMarkdown md ih oh = case md of
+  Marp -> T.hPutStr oh (T.unlines Marp.headers) >> loop ih oh True
+  Zenn -> T.hPutStr oh (T.unlines Zenn.headers) >> loop ih oh True
+  Other fp -> T.readFile fp >>= T.hPutStr oh >> loop ih oh True
 
 loop :: Handle -> Handle -> InComment -> IO ()
 loop ih oh flg = bool (hs2md ih oh flg =<< T.hGetLine ih) (done flg oh) =<< hIsEOF ih

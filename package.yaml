@@ -1,16 +1,16 @@
 name:                hs2md
-version:             0.5.0.0
-github:              "githubuser/hs2md"
+version:             0.6.0.0
+github:              "nobsun/hs2md.git"
 license:             BSD3
-author:              "Author name here"
-maintainer:          "example@example.com"
-copyright:           "2020 Author name here"
+author:              "Nobuo Yamasita"
+maintainer:          "nobsun@sampou.org"
+copyright:           "2020 Nobuo Yamshita"
 
 extra-source-files:
 - README.md
 - ChangeLog.md
 
-description:         Please see the README on GitHub at <https://github.com/githubuser/hs2md#readme>
+description:         Please see the README on GitHub at <https://github.com/nobsun/hs2md#readme>
 
 dependencies:
 - base >= 4.7 && < 5

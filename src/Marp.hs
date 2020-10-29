@@ -14,7 +14,11 @@ headers =
   , "  p br {"
   , "    display: none;"
   , "  }"
+  , "  code, pre {"
+  , "    font-family: 'HackGenNerd Console';"
+  , "  }"
   , "theme: gaia"
+  , ""
   , "---"
   , ""
   ]
