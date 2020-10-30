@@ -10,7 +10,8 @@ import System.FilePath ( splitExtension )
 import System.Environment ( getArgs, getProgName )
 
 import TextFilter ( fileProc )
-import Hs2Md ( haskellToMarkdown, MD(..) )
+import Hs2Md ( haskellToMarkdown )
+import MD
 -- 
 -- ---
 -- 

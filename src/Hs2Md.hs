@@ -9,11 +9,7 @@ import System.IO ( Handle, hIsEOF, hPutStrLn )
 
 import qualified Marp
 import qualified Zenn
-
-data MD 
-  = Marp
-  | Zenn
-  | Other FilePath
+import MD ( MD(..) )
 
 type InComment = Bool
 

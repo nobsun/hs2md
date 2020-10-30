@@ -9,6 +9,7 @@ import System.IO
 
 import TextFilter
 import Md2Hs
+import MD
 -- 
 -- ---
 -- 
@@ -18,9 +19,9 @@ main :: IO ()
 main = do
   { args <- getArgs
   ; case args of
-      []         -> fileProc "-" "-" markdownToHaskell
+      []         -> fileProc "-" "-" (markdownToHaskell Marp)
       inp:[]     -> case splitExtension inp of
-        (fp,".md") -> fileProc inp (fp++".hs") markdownToHaskell
-        _          -> fileProc inp "-" markdownToHaskell
-      inp:outp:_ -> fileProc inp outp markdownToHaskell
+        (fp,".md") -> fileProc inp (fp++".hs") (markdownToHaskell Marp)
+        _          -> fileProc inp "-" (markdownToHaskell Marp)
+      inp:outp:_ -> fileProc inp outp (markdownToHaskell Marp)
   }

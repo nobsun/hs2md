@@ -12,6 +12,7 @@ import System.IO
 
 import TextFilter
 import Hs2Md
+import MD
 -- 
 -- ---
 -- 

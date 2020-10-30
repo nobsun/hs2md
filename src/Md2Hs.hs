@@ -6,14 +6,19 @@ import Data.Bool (bool)
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
-import System.IO
+import System.IO ( Handle, hIsEOF, hPutStrLn )
 
 import qualified Marp
+import qualified Zenn
+import MD
 
 type InCode = Bool
 
-markdownToHaskell :: Handle -> Handle -> IO ()
-markdownToHaskell ih oh = skip ih Marp.headersLength >> loop ih oh False
+markdownToHaskell :: MD -> Handle -> Handle -> IO ()
+markdownToHaskell md ih oh = case md of
+  Marp -> skip ih Marp.headersLength >> loop ih oh False
+  Zenn -> skip ih Zenn.headersLength >> loop ih oh False
+  Other fp -> (length . lines <$> readFile fp) >>= skip ih >> loop ih oh False
 
 skip :: Handle -> Int -> IO ()
 skip hdl n = case n of
