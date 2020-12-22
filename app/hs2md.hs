@@ -11,7 +11,7 @@ import System.Environment ( getArgs, getProgName )
 
 import TextFilter ( fileProc )
 import Hs2Md ( haskellToMarkdown )
-import MD
+import MD ( MD(..) )
 -- 
 -- ---
 -- 
