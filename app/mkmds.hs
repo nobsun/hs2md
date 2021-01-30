@@ -4,15 +4,14 @@
 
 module Main where
 
-import Data.Char
-import Data.List
-import System.FilePath
-import System.Environment
-import System.IO
+import Data.Char ( toLower )
+import Data.List ( isInfixOf )
+import System.FilePath ( (-<.>), (</>) )
+import System.Environment ( getArgs, getProgName )
 
-import TextFilter
-import Hs2Md
-import MD
+import TextFilter ( fileProc )
+import Hs2Md ( haskellToMarkdown )
+import MD ( MD (Marp, Zenn, Gfm) )
 -- 
 -- ---
 -- 
@@ -32,6 +31,6 @@ md :: String -> MD
 md s = if
   | "marp" `isInfixOf` s' -> Marp
   | "zenn" `isInfixOf` s' -> Zenn
-  | otherwise             -> Marp
+  | otherwise             -> Gfm
   where
     s' = map toLower s

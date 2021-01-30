@@ -17,7 +17,7 @@ headers =
   , "  code, pre {"
   , "    font-family: 'HackGenNerd Console';"
   , "  }"
-  , "theme: gaia"
+  , "theme: defalut"
   , ""
   , "---"
   , ""

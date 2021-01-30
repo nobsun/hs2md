@@ -17,7 +17,8 @@ haskellToMarkdown :: MD -> Handle -> Handle -> IO ()
 haskellToMarkdown md ih oh = case md of
   Marp -> T.hPutStr oh (T.unlines Marp.headers) >> loop ih oh True
   Zenn -> T.hPutStr oh (T.unlines Zenn.headers) >> loop ih oh True
-  Other fp -> T.readFile fp >>= T.hPutStr oh >> loop ih oh True
+  Gfm  -> T.hPutStr oh ""                       >> loop ih oh True
+  Other fp -> T.readFile fp >>= T.hPutStr oh    >> loop ih oh True
 
 loop :: Handle -> Handle -> InComment -> IO ()
 loop ih oh flg = bool (hs2md ih oh flg =<< T.hGetLine ih) (done flg oh) =<< hIsEOF ih

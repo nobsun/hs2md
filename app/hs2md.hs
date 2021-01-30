@@ -11,7 +11,7 @@ import System.Environment ( getArgs, getProgName )
 
 import TextFilter ( fileProc )
 import Hs2Md ( haskellToMarkdown )
-import MD
+import MD ( MD(Marp, Gfm, Other, Zenn) )
 -- 
 -- ---
 -- 
@@ -34,6 +34,6 @@ md :: String -> MD
 md s = if
   | "marp" `isInfixOf` s' -> Marp
   | "zenn" `isInfixOf` s' -> Zenn
-  | otherwise             -> Marp
+  | otherwise             -> Gfm
   where
     s' = map toLower s
