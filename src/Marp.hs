@@ -22,6 +22,7 @@ headers =
   , "  }"
   , "theme: default"
   , "paginate: true"
+  , "math: katex"
   , ""
   , "---"
   , ""
