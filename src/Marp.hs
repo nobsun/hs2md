@@ -1,30 +1,47 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Marp where
 
-import Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.IO as T
+import System.Directory
 
-headersLength :: Int
-headersLength = length headers
+headerLength :: IO Int
+headerLength = length <$> header
 
-headers :: [Text]
-headers = 
-  [ "---"
-  , "marp: true"
-  , "style: |"
-  , "  section {"
-  , "    font-family: 'Migu 1C';"
-  , "  }"
-  , "  p br {"
-  , "    display: none;"
-  , "  }"
-  , "  code, pre {"
-  , "    font-family: 'HackGen Console NFJ';"
-  , "  }"
-  , "theme: default"
-  , "paginate: true"
-  , "math: katex"
-  , ""
-  , "---"
-  , ""
-  ]
+header :: IO [T.Text]
+header = do
+    { hd <- doesFileExist headerFile
+    ; if hd then T.lines <$> T.readFile headerFile else return defaultHeader
+    }
+
+headerFile :: FilePath
+headerFile = "doc/marp-header.yaml"
+
+defaultHeader :: [T.Text]
+defaultHeader =
+    [ "---"
+    , "marp: true"
+    , "style: |"
+    , "  section {"
+    , "    font-family: 'Migu 1C';"
+    , "  }"
+    , "  p br {"
+    , "    display: none;"
+    , "  }"
+    , "  code, pre {"
+    , "    font-family: 'HackGen Console NF';"
+    , "  }"
+    , "  li {"
+    , "    font-size: 90%;"
+    , "  }"
+    , "  table {"
+    , "    font-size: 15px;"
+    , "  }"
+    , "theme: default"
+    , "paginate: true"
+    , "math: katex"
+    , ""
+    , "---"
+    , ""
+    ]
 

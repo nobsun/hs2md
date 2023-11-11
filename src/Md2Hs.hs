@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE MultiWayIf #-}
 {-# LANGUAGE OverloadedStrings #-}
 module Md2Hs where
@@ -12,35 +13,36 @@ import qualified Marp
 import qualified Zenn
 import MD
 
+import Debug.Trace
+
 type InCode = Bool
 
 markdownToHaskell :: MD -> Handle -> Handle -> IO ()
 markdownToHaskell md ih oh = case md of
-  Marp -> skip ih Marp.headersLength >> loop ih oh False
-  Zenn -> skip ih Zenn.headersLength >> loop ih oh False
-  Other fp -> (length . lines <$> readFile fp) >>= skip ih >> loop ih oh False
+    Marp     -> loop ih oh False =<< Marp.headerLength
+    Zenn     -> loop ih oh False =<< Zenn.headerLength
+    Other fp -> loop ih oh False . length . lines =<< readFile fp
 
-skip :: Handle -> Int -> IO ()
-skip hdl n = case n of
-  0 -> return ()
-  n -> T.hGetLine hdl >> skip hdl (n-1)
+loop :: Handle -> Handle -> InCode -> Int -> IO ()
+loop ih oh flg 0 = bool (md2hs flg ih oh =<< T.hGetLine ih) done =<< hIsEOF ih
+loop ih oh flg n = bool (const' (loop ih oh flg (n-1)) =<< T.hGetLine ih) done =<< hIsEOF ih
 
-loop :: Handle -> Handle -> Bool -> IO ()
-loop ih oh flg = bool (md2hs ih oh flg =<< T.hGetLine ih) done =<< hIsEOF ih
+const' :: a -> b -> a
+const' x !y = x
 
-md2hs :: Handle -> Handle -> InCode -> Text -> IO ()
-md2hs ih oh flg line = case m2h flg line of
-  (nflg, "")   -> bool nop (hPutStrLn oh "") flg >> loop ih oh nflg
-  (nflg, ts) -> T.hPutStrLn oh ts >> loop ih oh nflg
+md2hs :: InCode -> Handle -> Handle -> Text -> IO ()
+md2hs flg ih oh line = case m2h flg line of
+  (flg',"") -> loop ih oh flg' 0
+  (flg',ts) -> T.hPutStrLn oh ts >> loop ih oh flg 0
 
 m2h :: InCode -> Text -> (InCode, Text)
 m2h flg line = if
-  | flg -> if
-      | endCode `T.isPrefixOf` line -> (False, "")
-      | otherwise                   -> (flg, line)
-  | otherwise -> if
-      | beginCode `T.isPrefixOf` line -> (True, "")
-      | otherwise                     -> (flg, T.append "-- " line)
+    | flg       -> if
+        | endCode `T.isPrefixOf` line   -> (False, "")
+        | otherwise                     -> (flg, line)
+    | otherwise -> if
+        | beginCode `T.isPrefixOf` line -> (True, "")
+        | otherwise                     -> (flg, T.append "-- " line)
 
 nop :: IO ()
 nop = return ()
