@@ -4,6 +4,7 @@
 module Md2Hs where
 
 import Data.Bool (bool)
+import Data.Maybe
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
@@ -17,23 +18,33 @@ import Debug.Trace
 
 type InCode = Bool
 
-markdownToHaskell :: MD -> Handle -> Handle -> IO ()
-markdownToHaskell md ih oh = case md of
-    Marp     -> loop ih oh False =<< Marp.headerLength
-    Zenn     -> loop ih oh False =<< Zenn.headerLength
-    Other fp -> loop ih oh False . length . lines =<< readFile fp
+markdownToHaskell :: Handle -> Handle -> IO ()
+markdownToHaskell ih oh
+    = (maybe nop (T.hPutStrLn oh) <$> removeHeader ih) >> loop ih oh False
 
-loop :: Handle -> Handle -> InCode -> Int -> IO ()
-loop ih oh flg 0 = bool (md2hs flg ih oh =<< T.hGetLine ih) done =<< hIsEOF ih
-loop ih oh flg n = bool (const' (loop ih oh flg (n-1)) =<< T.hGetLine ih) done =<< hIsEOF ih
+loop :: Handle -> Handle -> InCode -> IO ()
+loop ih oh flg = bool (md2hs flg ih oh =<< T.hGetLine ih) done =<< hIsEOF ih
+
+removeHeader :: Handle -> IO (Maybe T.Text)
+removeHeader ih = do
+  { eof <- hIsEOF ih
+  ; if eof then return Nothing
+    else do { ln <- T.stripEnd <$> T.hGetLine ih
+            ; if ln /= "---" then return (Just ln) else iter
+            }
+  }
+    where
+        iter = bool (return Nothing)
+                    (bool iter (return Nothing) . (== "---") . T.stripEnd =<< T.hGetLine ih)
+             =<< hIsEOF ih
 
 const' :: a -> b -> a
 const' x !y = x
 
 md2hs :: InCode -> Handle -> Handle -> Text -> IO ()
 md2hs flg ih oh line = case m2h flg line of
-  (flg',"") -> loop ih oh flg' 0
-  (flg',ts) -> T.hPutStrLn oh ts >> loop ih oh flg 0
+  (flg',"") -> loop ih oh flg'
+  (flg',ts) -> T.hPutStrLn oh ts >> loop ih oh flg
 
 m2h :: InCode -> Text -> (InCode, Text)
 m2h flg line = if

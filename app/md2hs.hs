@@ -22,12 +22,11 @@ main = do
     { prog <- getProgName
     ; args <- getArgs
     ; case args of
-          []            -> fileProc "-" "-" (markdownToHaskell (md prog))
+          []            -> fileProc "-" "-" markdownToHaskell
           inp:[]        -> case splitExtension inp of
-              (fp,".md")    -> fileProc inp (fp++".hs") (markdownToHaskell (md prog))
-              _             -> fileProc inp "-"         (markdownToHaskell (md prog))
-          inp:outp:[]   -> fileProc inp outp (markdownToHaskell (md prog))
-          inp:outp:hd:_ -> fileProc inp outp (markdownToHaskell (Other hd))
+              (fp,".md")    -> fileProc inp (fp++".hs") markdownToHaskell
+              _             -> fileProc inp "-"         markdownToHaskell
+          inp:outp:_   -> fileProc inp outp markdownToHaskell
     }
 
 md :: String -> MD
