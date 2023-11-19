@@ -43,7 +43,7 @@ const' x !y = x
 
 md2hs :: InCode -> Handle -> Handle -> Text -> IO ()
 md2hs flg ih oh line = case m2h flg line of
-  (flg',"") -> loop ih oh flg'
+  (flg',"") -> bool (loop ih oh flg') (T.hPutStrLn oh "" >> loop ih oh flg') flg
   (flg',ts) -> T.hPutStrLn oh ts >> loop ih oh flg
 
 m2h :: InCode -> Text -> (InCode, Text)
