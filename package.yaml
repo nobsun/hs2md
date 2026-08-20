@@ -26,26 +26,42 @@ library:
   source-dirs: src
 
 executables:
-  hs2md:
-    main:                hs2md.hs
-    source-dirs:         app
-    dependencies:
-    - hs2md
-
-  md2hs:
-    main:                md2hs.hs
-    source-dirs:         app
+  mkdocdir:
+    main:               Main.hs
+    source-dirs:        app/mkdocdir
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
     dependencies:
     - hs2md
 
   mkmds:
-    main:		mkmds.hs
-    source-dirs:	app
+    main:               Main.hs
+    source-dirs:        app/mkmds
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
     dependencies:
     - hs2md
 
-  mkdocdir:
-    main:		mkdocdir.hs
-    source-dirs:	app
+  md2hs:
+    main:               Main.hs
+    source-dirs:        app/md2hs
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - hs2md
+
+  hs2md:
+    main:               Main.hs
+    source-dirs:        app/hs2md
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
     dependencies:
     - hs2md

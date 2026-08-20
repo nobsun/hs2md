@@ -30,6 +30,7 @@ defaultHeader =
     , "  }"
     , "  code, pre {"
     , "    font-family: 'HackGen Console NF';"
+    , "    font-size: 90%;"
     , "  }"
     , "  li {"
     , "    font-size: 90%;"

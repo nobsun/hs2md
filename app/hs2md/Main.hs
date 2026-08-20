@@ -1,6 +1,6 @@
 -- # Converter from Haskell to Markdown
 -- 
-{-# LANGUAGE MultiWayIf #-}
+{-# LANGUAGE GHC2024 #-}
 
 module Main where
 
@@ -31,9 +31,8 @@ main = do
     }
 
 md :: String -> MD
-md s = if
-    | "marp" `isInfixOf` s' -> Marp
-    | "zenn" `isInfixOf` s' -> Zenn
-    | otherwise             -> Gfm
-    where
-        s' = map toLower s
+md s = case map toLower s of
+    s'
+        | "marp" `isInfixOf` s' -> Marp
+        | "zenn" `isInfixOf` s' -> Zenn
+        | otherwise             -> Gfm

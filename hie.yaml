@@ -1,0 +1,31 @@
+cradle:
+  stack:
+    - path: "./src"
+      component: "hs2md:lib"
+
+    - path: "./app/hs2md/Main.hs"
+      component: "hs2md:exe:hs2md"
+
+    - path: "./app/hs2md/Paths_hs2md.hs"
+      component: "hs2md:exe:hs2md"
+
+    - path: "./app/md2hs/Main.hs"
+      component: "hs2md:exe:md2hs"
+
+    - path: "./app/md2hs/Paths_hs2md.hs"
+      component: "hs2md:exe:md2hs"
+
+    - path: "./app/mkdocdir.hs"
+      component: "hs2md:exe:mkdocdir"
+
+    - path: "./app/Main.hs"
+      component: "hs2md:exe:mkdocdir"
+
+    - path: "./app/Paths_hs2md.hs"
+      component: "hs2md:exe:mkdocdir"
+
+    - path: "./app/mkmds/Main.hs"
+      component: "hs2md:exe:mkmds"
+
+    - path: "./app/mkmds/Paths_hs2md.hs"
+      component: "hs2md:exe:mkmds"
